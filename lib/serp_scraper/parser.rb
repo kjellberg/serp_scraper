@@ -75,12 +75,13 @@ module SerpScraper
       return [] if engine == :unknown
 
       config = @schemas[engine]["result_selectors"]
-      @doc.css(config["container"].first).map do |result|
+      @doc.css(config["container"].first).map.with_index(1) do |result, position|
         title_element = find_first_matching_element(result, config["title"])
         url_element = find_first_matching_element(result, config["url"])
         snippet_element = find_first_matching_element(result, config["snippet"])
 
         {
+          position: position,
           title: title_element&.text&.strip,
           url: url_element&.[]("href")&.strip,
           snippet: snippet_element&.text&.strip,
