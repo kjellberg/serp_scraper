@@ -1,0 +1,10 @@
+{
+  "container_selectors": ["#search", ".g", "#rso"],
+  "result_selectors": {
+    "container": ["div.MjjYud", "div.g"],
+    "title": ["h3.LC20lb", "h3.r a"],
+    "url": ["a", "h3.r a"],
+    "snippet": ["div.VwiC3b", "div.s", "span.st"]
+  },
+  "query_selectors": ["input[name=\"q\"]", "input[name=\"p\"]", "title"]
+} 

@@ -1,27 +1,13 @@
 # frozen_string_literal: true
 
 require "nokogiri"
+require "json"
 
 module SerpScraper
   class Parser
-    SEARCH_ENGINE_SELECTORS = {
-      google: [
-        "#search", # Main search container
-        ".g",      # Search results
-        "#rso"     # Results container
-      ],
-      bing: [
-        "#b_results",
-        ".b_algo"
-      ],
-      yahoo: [
-        "#web",
-        ".searchCenterMiddle"
-      ]
-    }.freeze
-
     def initialize(html)
       @doc = Nokogiri::HTML(html)
+      @schemas = load_schemas
     end
 
     def parse
@@ -34,30 +20,64 @@ module SerpScraper
 
     private
 
+    def load_schemas
+      schemas_dir = File.join(File.dirname(__FILE__), "schemas")
+      schemas = {}
+      
+      Dir.glob(File.join(schemas_dir, "*.json")).each do |file|
+        engine = File.basename(file, ".json").to_sym
+        schemas[engine] = JSON.parse(File.read(file))
+      end
+      
+      schemas
+    end
+
     def detect_search_engine
-      SEARCH_ENGINE_SELECTORS.each do |engine, selectors|
-        return engine if selectors.any? { |selector| @doc.css(selector).any? }
+      @schemas.each do |engine, schema|
+        return engine if schema["container_selectors"].any? { |selector| @doc.css(selector).any? }
       end
       :unknown
     end
 
     def extract_query
-      # Try to find the search query in various ways
-      query = @doc.css('input[name="q"]').first&.[]("value") ||
-              @doc.css('input[name="p"]').first&.[]("value") ||
-              @doc.css("title").first&.text&.split("-")&.first&.strip
+      engine = detect_search_engine
+      return "unknown" if engine == :unknown
+
+      selectors = @schemas[engine]["query_selectors"]
+      query = selectors.map do |selector|
+        if selector == "title"
+          @doc.css(selector).first&.text&.split("-")&.first&.strip
+        else
+          @doc.css(selector).first&.[]("value")
+        end
+      end.compact.first
 
       query || "unknown"
     end
 
-    def extract_results
-      return [] unless detect_search_engine == :google
+    def find_first_matching_element(element, selectors)
+      selectors = [selectors].flatten # Handle both single string and array of strings
+      selectors.each do |selector|
+        result = element.css(selector).first
+        return result if result
+      end
+      nil
+    end
 
-      @doc.css("div.MjjYud").map do |result|
+    def extract_results
+      engine = detect_search_engine
+      return [] if engine == :unknown
+
+      config = @schemas[engine]["result_selectors"]
+      @doc.css(config["container"].first).map do |result|
+        title_element = find_first_matching_element(result, config["title"])
+        url_element = find_first_matching_element(result, config["url"])
+        snippet_element = find_first_matching_element(result, config["snippet"])
+
         {
-          title: result.css("h3.LC20lb").text.strip,
-          url: result.css("a").first&.[]("href")&.strip,
-          snippet: result.css("div.VwiC3b").text.strip
+          title: title_element&.text&.strip,
+          url: url_element&.[]("href")&.strip,
+          snippet: snippet_element&.text&.strip
         }
       end
     end
