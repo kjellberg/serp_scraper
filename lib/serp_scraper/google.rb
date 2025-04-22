@@ -4,6 +4,7 @@ require "selenium/webdriver"
 require "webdrivers"
 require "nokogiri"
 require "tempfile"
+require "serp_scraper/parser"
 
 module SerpScraper
   class Google
@@ -38,9 +39,13 @@ module SerpScraper
           temp_file.write(html)
           temp_file.close
 
+          parser = Parser.new(html)
+          parsed = parser.parse
+
           {
             status: "success",
             html_path: temp_file.path,
+            parsed: parsed,
             request: {
               query: @query,
               params: @params,
