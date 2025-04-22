@@ -82,6 +82,9 @@ module SerpScraper
       # Set window size to a common resolution
       options.add_argument("--window-size=1920,1080")
 
+      # Run in headless mode
+      options.add_argument("--headless=new")
+
       if @proxy
         options.add_argument("--proxy-server=#{@proxy}")
       end
