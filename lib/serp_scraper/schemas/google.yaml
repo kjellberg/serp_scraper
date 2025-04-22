@@ -13,6 +13,7 @@ result_selectors:
     - ".BNeawe.s3v9rd.AP7Wnd"
     - ".VwiC3b"
     - ".PqksIc.nRlVm"
+    - ".fzUZNc"
 query_selectors:
   - 'input[name="q"]'
   - 'input[name="p"]'
