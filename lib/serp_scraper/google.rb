@@ -7,12 +7,11 @@ require "tempfile"
 
 module SerpScraper
   class Google
-    BASE_URL = "https://www.google.com/search"
-
-    def initialize(query:, params: {}, proxy: nil)
+    def initialize(query:, params: {}, proxy: nil, tld: 'com')
       @query = query
       @params = params
       @proxy = proxy
+      @tld = tld
     end
 
     def fetch
@@ -90,6 +89,10 @@ module SerpScraper
       driver
     end
 
+    def base_url
+      "https://www.google.#{@tld}/search"
+    end
+
     def build_url
       query_params = {
         q: @query,
@@ -97,7 +100,7 @@ module SerpScraper
         filter: 0
       }.merge(@params)
 
-      "#{BASE_URL}?#{URI.encode_www_form(query_params)}"
+      "#{base_url}?#{URI.encode_www_form(query_params)}"
     end
 
     def captcha_detected?(html)
