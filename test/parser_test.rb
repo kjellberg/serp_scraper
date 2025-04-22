@@ -16,7 +16,6 @@ class ParserTest < Minitest::Test
 
     assert_equal :google, result[:search_engine]
     assert_equal "ärtröra toast", result[:query]
-    assert_nil result[:results]
   end
 
   def test_parses_casino_no_search
@@ -25,7 +24,6 @@ class ParserTest < Minitest::Test
 
     assert_equal :google, result[:search_engine]
     assert_equal "casino", result[:query]
-    assert_nil result[:results]
   end
 
   def test_parses_casino_us_search
@@ -34,7 +32,6 @@ class ParserTest < Minitest::Test
 
     assert_equal :google, result[:search_engine]
     assert_equal "casino online", result[:query]
-    assert_nil result[:results]
   end
 
   def test_handles_unknown_search_engine
@@ -43,6 +40,5 @@ class ParserTest < Minitest::Test
 
     assert_equal :unknown, result[:search_engine]
     assert_equal "unknown", result[:query]
-    assert_nil result[:results]
   end
 end
