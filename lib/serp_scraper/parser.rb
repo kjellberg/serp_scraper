@@ -84,8 +84,7 @@ module SerpScraper
           position: position,
           title: title_element&.text&.strip,
           url: url_element&.[]("href")&.strip,
-          snippet: snippet_element&.text&.strip,
-          html: result.to_html
+          snippet: snippet_element&.text&.strip
         }
       end
     end

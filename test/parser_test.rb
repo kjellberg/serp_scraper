@@ -23,15 +23,12 @@ class ParserTest < Minitest::Test
       assert search_result[:title], "Result ##{index}: Expected title to exist, got nil\nFull result: #{search_result.inspect}"
       assert search_result[:url], "Result ##{index}: Expected URL to exist, got nil\nFull result: #{search_result.inspect}"
       assert search_result[:snippet], "Result ##{index}: Expected snippet to exist, got nil\nFull result: #{search_result.inspect}"
-      assert search_result[:html], "Result ##{index}: Expected HTML to exist, got nil\nFull result: #{search_result.inspect}"
 
       refute search_result[:title].empty?, "Result ##{index}: Expected title to be non-empty, got empty string\nFull result: #{search_result.inspect}"
       refute search_result[:url].empty?, "Result ##{index}: Expected URL to be non-empty, got empty string\nFull result: #{search_result.inspect}"
       refute search_result[:snippet].empty?, "Result ##{index}: Expected snippet to be non-empty, got empty string\nFull result: #{search_result.inspect}"
-      refute search_result[:html].empty?, "Result ##{index}: Expected HTML to be non-empty, got empty string\nFull result: #{search_result.inspect}"
 
       assert search_result[:url].start_with?("http"), "Result ##{index}: Expected URL to start with 'http', got #{search_result[:url].inspect}\nFull result: #{search_result.inspect}"
-      assert search_result[:html].include?("<"), "Result ##{index}: Expected HTML to contain HTML tags, got #{search_result[:html].inspect}\nFull result: #{search_result.inspect}"
     end
   end
 
@@ -48,15 +45,12 @@ class ParserTest < Minitest::Test
       assert search_result[:title], "Result ##{index}: Expected title to exist, got nil\nFull result: #{search_result.inspect}"
       assert search_result[:url], "Result ##{index}: Expected URL to exist, got nil\nFull result: #{search_result.inspect}"
       assert search_result[:snippet], "Result ##{index}: Expected snippet to exist, got nil\nFull result: #{search_result.inspect}"
-      assert search_result[:html], "Result ##{index}: Expected HTML to exist, got nil\nFull result: #{search_result.inspect}"
 
       refute search_result[:title].empty?, "Result ##{index}: Expected title to be non-empty, got empty string\nFull result: #{search_result.inspect}"
       refute search_result[:url].empty?, "Result ##{index}: Expected URL to be non-empty, got empty string\nFull result: #{search_result.inspect}"
       refute search_result[:snippet].empty?, "Result ##{index}: Expected snippet to be non-empty, got empty string\nFull result: #{search_result.inspect}"
-      refute search_result[:html].empty?, "Result ##{index}: Expected HTML to be non-empty, got empty string\nFull result: #{search_result.inspect}"
 
       assert search_result[:url].start_with?("http"), "Result ##{index}: Expected URL to start with 'http', got #{search_result[:url].inspect}\nFull result: #{search_result.inspect}"
-      assert search_result[:html].include?("<"), "Result ##{index}: Expected HTML to contain HTML tags, got #{search_result[:html].inspect}\nFull result: #{search_result.inspect}"
     end
   end
 
@@ -73,15 +67,12 @@ class ParserTest < Minitest::Test
       assert search_result[:title], "Result ##{index}: Expected title to exist, got nil\nFull result: #{search_result.inspect}"
       assert search_result[:url], "Result ##{index}: Expected URL to exist, got nil\nFull result: #{search_result.inspect}"
       assert search_result[:snippet], "Result ##{index}: Expected snippet to exist, got nil\nFull result: #{search_result.inspect}"
-      assert search_result[:html], "Result ##{index}: Expected HTML to exist, got nil\nFull result: #{search_result.inspect}"
 
       refute search_result[:title].empty?, "Result ##{index}: Expected title to be non-empty, got empty string\nFull result: #{search_result.inspect}"
       refute search_result[:url].empty?, "Result ##{index}: Expected URL to be non-empty, got empty string\nFull result: #{search_result.inspect}"
       refute search_result[:snippet].empty?, "Result ##{index}: Expected snippet to be non-empty, got empty string\nFull result: #{search_result.inspect}"
-      refute search_result[:html].empty?, "Result ##{index}: Expected HTML to be non-empty, got empty string\nFull result: #{search_result.inspect}"
 
       assert search_result[:url].start_with?("http"), "Result ##{index}: Expected URL to start with 'http', got #{search_result[:url].inspect}\nFull result: #{search_result.inspect}"
-      assert search_result[:html].include?("<"), "Result ##{index}: Expected HTML to contain HTML tags, got #{search_result[:html].inspect}\nFull result: #{search_result.inspect}"
     end
   end
 
