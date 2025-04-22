@@ -28,7 +28,7 @@ module SerpScraper
       {
         query: extract_query,
         search_engine: detect_search_engine,
-        results: nil
+        results: extract_results
       }
     end
 
@@ -48,6 +48,18 @@ module SerpScraper
               @doc.css("title").first&.text&.split("-")&.first&.strip
 
       query || "unknown"
+    end
+
+    def extract_results
+      return [] unless detect_search_engine == :google
+
+      @doc.css("div.MjjYud").map do |result|
+        {
+          title: result.css("h3.LC20lb").text.strip,
+          url: result.css("a").first&.[]("href")&.strip,
+          snippet: result.css("div.VwiC3b").text.strip
+        }
+      end
     end
   end
 end
