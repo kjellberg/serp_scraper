@@ -24,7 +24,7 @@ module SerpScraper
     def load_schemas
       schemas_dir = File.join(File.dirname(__FILE__), "schemas")
       schemas = {}
-      
+
       Dir.glob(File.join(schemas_dir, "*.{json,yaml}")).each do |file|
         engine = File.basename(file, ".*").to_sym
         content = File.read(file)
@@ -34,7 +34,7 @@ module SerpScraper
           YAML.safe_load(content)
         end
       end
-      
+
       schemas
     end
 
@@ -62,7 +62,7 @@ module SerpScraper
     end
 
     def find_first_matching_element(element, selectors)
-      selectors = [selectors].flatten # Handle both single string and array of strings
+      selectors = [ selectors ].flatten # Handle both single string and array of strings
       selectors.each do |selector|
         result = element.css(selector).first
         return result if result
@@ -83,7 +83,8 @@ module SerpScraper
         {
           title: title_element&.text&.strip,
           url: url_element&.[]("href")&.strip,
-          snippet: snippet_element&.text&.strip
+          snippet: snippet_element&.text&.strip,
+          html: result.to_html
         }
       end
     end

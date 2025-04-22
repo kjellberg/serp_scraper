@@ -4,18 +4,15 @@ container_selectors:
   - "#rso"
 result_selectors:
   container:
-    - "div.MjjYud"
-    - "div.g"
+    - ".MjjYud .wHYlTd[data-hveid]"
   title:
-    - "h3.LC20lb"
-    - "h3.r a"
+    - "h3"
   url:
-    - "a"
-    - "h3.r a"
+    - "a.zReHs"
   snippet:
-    - "div.VwiC3b"
-    - "div.s"
-    - "span.st"
+    - ".BNeawe.s3v9rd.AP7Wnd"
+    - ".VwiC3b"
+    - ".PqksIc.nRlVm"
 query_selectors:
   - 'input[name="q"]'
   - 'input[name="p"]'
