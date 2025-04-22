@@ -2,6 +2,7 @@
 
 require "nokogiri"
 require "json"
+require "yaml"
 
 module SerpScraper
   class Parser
@@ -24,9 +25,14 @@ module SerpScraper
       schemas_dir = File.join(File.dirname(__FILE__), "schemas")
       schemas = {}
       
-      Dir.glob(File.join(schemas_dir, "*.json")).each do |file|
-        engine = File.basename(file, ".json").to_sym
-        schemas[engine] = JSON.parse(File.read(file))
+      Dir.glob(File.join(schemas_dir, "*.{json,yaml}")).each do |file|
+        engine = File.basename(file, ".*").to_sym
+        content = File.read(file)
+        schemas[engine] = if file.end_with?(".json")
+          JSON.parse(content)
+        else
+          YAML.safe_load(content)
+        end
       end
       
       schemas
