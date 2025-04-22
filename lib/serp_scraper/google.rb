@@ -3,6 +3,7 @@
 require "selenium/webdriver"
 require "webdrivers"
 require "nokogiri"
+require "tempfile"
 
 module SerpScraper
   class Google
@@ -33,9 +34,14 @@ module SerpScraper
             }
           }
         else
+          html = clean_html(driver.page_source)
+          temp_file = Tempfile.new(['google_serp', '.html'])
+          temp_file.write(html)
+          temp_file.close
+          
           {
             status: "success",
-            raw_html: clean_html(driver.page_source),
+            html_path: temp_file.path,
             request: {
               query: @query,
               params: @params,
@@ -86,7 +92,9 @@ module SerpScraper
 
     def build_url
       query_params = {
-        q: @query
+        q: @query,
+        num: 100,
+        filter: 0
       }.merge(@params)
 
       "#{BASE_URL}?#{URI.encode_www_form(query_params)}"
@@ -110,55 +118,37 @@ module SerpScraper
       # Remove all script tags
       doc.css("script").remove
       
-      # Remove all style tags
-      doc.css("style").remove
+      # Remove all elements with role="dialog"
+      doc.css('[role="dialog"]').remove
       
-      # Remove all noscript tags
-      doc.css("noscript").remove
-      
-      # Remove all iframe tags
-      doc.css("iframe").remove
-      
-      # Remove all link tags with rel="stylesheet"
-      doc.css('link[rel="stylesheet"]').remove
-      
-      # Remove navigation and header elements
-      doc.css("header, nav, .gb_wa, .gb_1d, .gb_3d, .gb_3c, .gb_3a, .gb_3b").remove
-      
-      # Remove footer elements
-      doc.css("footer, .fbar, .fbar a, .fbar span").remove
-      
-      # Remove ads
-      doc.css(".ads, .adsbygoogle, .ad, .ads-fr, .ads-ad, .ads-feed").remove
-      
-      # Remove cookie consent and other popups
-      doc.css(".cookie-consent, .popup, .modal, .overlay").remove
-      
-      # Remove social media buttons and sharing elements
-      doc.css(".social, .share, .social-share, .social-buttons").remove
-      
-      # Remove tracking pixels and analytics elements
-      doc.css("img[width='1'][height='1'], img[style*='display:none']").remove
-      
-      # Remove empty divs and spans
-      doc.css("*").each do |node|
-        node.remove if node.text.strip.empty? && node.children.empty?
-      end
-      
-      # Remove comments
-      doc.xpath("//comment()").remove
-      
-      # Remove data attributes
-      doc.css("*").each do |node|
-        node.attributes.each do |name, _|
-          node.remove_attribute(name) if name.start_with?("data-")
+      # Remove fixed positioning and overflow restrictions
+      doc.css('*').each do |node|
+        style = node['style']
+        if style
+          # Remove fixed positioning
+          style.gsub!(/position:\s*fixed;?/, '')
+          # Remove overflow restrictions
+          style.gsub!(/overflow:\s*(hidden|auto|scroll);?/, '')
+          # Remove z-index
+          style.gsub!(/z-index:\s*\d+;?/, '')
+          # Remove height restrictions
+          style.gsub!(/height:\s*\d+px;?/, '')
+          # Remove max-height restrictions
+          style.gsub!(/max-height:\s*\d+px;?/, '')
+          
+          # If style is empty after cleaning, remove it
+          node.remove_attribute('style') if style.strip.empty?
         end
       end
       
-      # Remove class and id attributes from non-essential elements
-      doc.css("*:not(.g):not(.tF2Cxc):not(.yuRUbf):not(.IsZvec):not(.VwiC3b):not(.r):not(.s):not(.kp-wholepage)").each do |node|
-        node.remove_attribute("class")
-        node.remove_attribute("id")
+      # Ensure body and html elements are scrollable
+      doc.css('body, html').each do |node|
+        node['style'] = 'overflow: auto; height: auto;'
+      end
+      
+      # Ensure main content area is scrollable
+      doc.css('#main, #search, .main, .search').each do |node|
+        node['style'] = 'overflow: auto; height: auto;'
       end
       
       doc.to_html
